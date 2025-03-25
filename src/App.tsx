@@ -1,20 +1,20 @@
 // App.tsx
 import { useState, useEffect } from 'react';
 import './App.css';
-import Person from "./model/person.model.tsx";
-import ThemeSwitcher from "./components/ThemeSwitcher.tsx";
-import PersonTable from "./components/PersonTable.tsx";
-import { PersonService } from "./service/PersonService.ts";
-import PersonModal from "./components/PersonModal.tsx";
-import usePersonActions from "./hooks/usePersonActions.ts";
-import usePersonModal from "./hooks/usePersonModal.ts";
-import {DARK_THEME, LIGHT_THEME} from "./constants/theme.ts";
+import {User} from "./model/user.model"; // Import the User model
+import ThemeSwitcher from "./components/ThemeSwitcher";
+import UserTable from "./components/UserTable"; // Update the table component name
+import { UserService } from "./service/UserService"; // Update the service import
+import UserModal from "./components/UserModal"; // Update the modal component name
+import useUserActions from "./hooks/useUserActions"; // Update the hook name
+import useUserModal from "./hooks/useUserModal"; // Update the hook name
+import { DARK_THEME, LIGHT_THEME } from "./constants/theme";
 
 function App() {
-    const [data, setData] = useState<Person[]>([]);
+    const [data, setData] = useState<User[]>([]); // Replace Person with User
     const [loading, setLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-    const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null); // Replace Person with User
     const [currentTheme, setCurrentTheme] =
         useState<typeof LIGHT_THEME | typeof DARK_THEME>(LIGHT_THEME);
 
@@ -22,27 +22,27 @@ function App() {
         fetchData();
     }, []);
 
-    const { handleAddPerson, handleUpdatePerson, handleDeletePerson } =
-        usePersonActions({
+    const { handleAddUser, handleUpdateUser, handleDeleteUser } =
+        useUserActions({
             setData,
-            setSelectedPerson,
-            selectedPerson,
+            setSelectedUser,
+            selectedUser,
         });
 
     const {
         isModalOpen,
         isUpdateMode,
-        newPerson,
+        newUser,
         openModal,
         closeModal,
-    } = usePersonModal({ selectedPerson });
+    } = useUserModal({ selectedUser }); // Replace Person with User
 
     const fetchData = async () => {
         setLoading(true);
         setIsError(false);
         try {
-            const persons = await PersonService.getPersons();
-            setData(persons);
+            const users = await UserService.getUsers(); // Replace PersonService with UserService
+            setData(users);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -51,8 +51,8 @@ function App() {
         }
     };
 
-    const handleRowSelected = (state: { selectedRows: Person[] }) => {
-        setSelectedPerson(state.selectedRows[0] || null);
+    const handleRowSelected = (state: { selectedRows: User[] }) => { // Replace Person with User
+        setSelectedUser(state.selectedRows[0] || null);
     };
 
     const handleThemeChange = (newTheme: 'light' | 'dark') => {
@@ -61,28 +61,28 @@ function App() {
 
     return (
         <div className="app-container">
-            <h1>Person List</h1>
+            <h1>User List</h1> {/* Update the title */}
             <ThemeSwitcher onThemeChange={handleThemeChange} />
             <div className="button-group">
                 <button onClick={() => openModal()}>Add</button>
-                <button onClick={() => openModal(true)} disabled={!selectedPerson}>Update</button>
-                <button onClick={handleDeletePerson} disabled={!selectedPerson}>Delete</button>
+                <button onClick={() => openModal(true)} disabled={!selectedUser}>Update</button> {/* Replace Person with User */}
+                <button onClick={handleDeleteUser} disabled={!selectedUser}>Delete</button> {/* Replace Person with User */}
             </div>
             <br />
-            <PersonTable
+            <UserTable // Replace PersonTable with UserTable
                 data={data}
                 loading={loading}
                 isError={isError}
                 onRowSelected={handleRowSelected}
                 theme={currentTheme}
             />
-            <PersonModal
+            <UserModal // Replace PersonModal with UserModal
                 isOpen={isModalOpen}
                 isUpdateMode={isUpdateMode}
-                initialPerson={newPerson}
+                initialUser={newUser} // Replace Person with User
                 onClose={closeModal}
-                onAdd={handleAddPerson}
-                onUpdate={handleUpdatePerson}
+                onAdd={handleAddUser} // Replace Person with User
+                onUpdate={handleUpdateUser} // Replace Person with User
             />
         </div>
     );
